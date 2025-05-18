@@ -19,60 +19,84 @@ interface CodeExample {
 }
 
 export default function CodeExamplesPage() {
-  // Mock data for code examples
-  const [examples, setExamples] = useState<CodeExample[]>([
-    {
-      id: "1",
-      title: "Authentication Example",
-      summary: "How to implement user authentication with our SDK",
-      language: "typescript",
-      content: `import { auth } from '@/lib/auth';\n\nasync function authenticate() {\n  const user = await auth.signIn({\n    email,\n    password\n  });\n  return user;\n}`,
-      tags: ["authentication", "user", "login"],
-      created_at: "2025-04-10T14:48:00",
-      updated_at: "2025-05-01T09:15:00"
-    },
-    {
-      id: "2",
-      title: "API Route Example",
-      summary: "Creating a basic API route with our framework",
-      language: "typescript",
-      content: `export async function GET(request: Request) {\n  const data = await fetchData();\n  return Response.json(data);\n}`,
-      tags: ["api", "routes", "backend"],
-      created_at: "2025-04-15T10:30:00",
-      updated_at: "2025-04-15T10:30:00"
-    },
-    {
-      id: "3",
-      title: "Data Fetching with Hooks",
-      summary: "Using our custom hooks for data fetching",
-      language: "typescript",
-      content: `import { useData } from '@/hooks/data';\n\nfunction ProductList() {\n  const { data, loading, error } = useData('/api/products');\n  \n  if (loading) return <p>Loading...</p>;\n  if (error) return <p>Error: {error.message}</p>;\n  \n  return (\n    <ul>\n      {data.map(product => (\n        <li key={product.id}>{product.name}</li>\n      ))}\n    </ul>\n  );\n}`,
-      tags: ["hooks", "data-fetching", "frontend"],
-      created_at: "2025-04-20T16:22:00",
-      updated_at: "2025-05-05T11:45:00"
-    },
-    {
-      id: "4",
-      title: "WebSocket Integration",
-      summary: "How to set up real-time communication with WebSockets",
-      language: "javascript",
-      content: `import { createWebSocketClient } from '@/lib/websocket';\n\nconst socket = createWebSocketClient('wss://api.example.com/ws');\n\nsocket.on('connect', () => {\n  console.log('Connected to WebSocket server');\n});\n\nsocket.on('message', (data) => {\n  console.log('Received message:', data);\n});\n\nsocket.on('disconnect', () => {\n  console.log('Disconnected from WebSocket server');\n});`,
-      tags: ["websocket", "real-time", "communication"],
-      created_at: "2025-04-25T09:10:00",
-      updated_at: "2025-04-25T09:10:00"
-    },
-    {
-      id: "5",
-      title: "Form Validation",
-      summary: "Implementing form validation with our validation library",
-      language: "typescript",
-      content: `import { useForm } from '@/lib/forms';\n\nfunction ContactForm() {\n  const { register, handleSubmit, errors } = useForm();\n  \n  const onSubmit = (data) => {\n    console.log('Form submitted:', data);\n  };\n  \n  return (\n    <form onSubmit={handleSubmit(onSubmit)}>\n      <input\n        {...register('email', { \n          required: 'Email is required',\n          pattern: {\n            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$/i,\n            message: 'Invalid email address'\n          }\n        })}\n      />\n      {errors.email && <p>{errors.email.message}</p>}\n      \n      <button type="submit">Submit</button>\n    </form>\n  );\n}`,
-      tags: ["forms", "validation", "frontend"],
-      created_at: "2025-05-01T14:30:00",
-      updated_at: "2025-05-10T16:20:00"
+  const [examples, setExamples] = useState<CodeExample[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchAndExtractExamples = async () => {
+      setLoading(true)
+      try {
+        const res = await fetch("http://149.248.37.184:3000/content")
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`)
+        const data = await res.json()
+        // Only consider drafts with markdown code blocks
+        const codeExamples: CodeExample[] = []
+        data.forEach((draft: any) => {
+          if (!draft.content || typeof draft.content !== "string") return
+          // Find all code blocks and their section headers
+          const lines = draft.content.split(/\r?\n/)
+          let currentSection = draft.title || "Untitled"
+          let sectionText: string[] = []
+          let inSection = false
+          let codeBlock = null
+          let codeLang = ""
+          let codeLines: string[] = []
+          let sectionStartIdx = 0
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i]
+            const sectionMatch = line.match(/^##+\s+(.*)/)
+            if (sectionMatch) {
+              // New section starts
+              currentSection = sectionMatch[1].trim()
+              sectionText = []
+              inSection = true
+              sectionStartIdx = i
+              continue
+            }
+            // Start of code block
+            const codeStart = line.match(/^```([a-zA-Z]*)/)
+            if (codeStart) {
+              codeLang = codeStart[1] || ""
+              codeLines = []
+              // Find end of code block
+              let j = i + 1
+              while (j < lines.length && !lines[j].startsWith("```")) {
+                codeLines.push(lines[j])
+                j++
+              }
+              // Compose summary from section text up to code block
+              let summary = sectionText.join(" ").replace(/[`#]/g, "").trim()
+              if (!summary) summary = draft.summary || draft.excerpt || ""
+              codeExamples.push({
+                id: `${draft.id}-${i}`,
+                title: currentSection,
+                summary,
+                language: codeLang || "markdown",
+                content: codeLines.join("\n"),
+                tags: [],
+                created_at: draft.created_at || draft.inserted || "",
+                updated_at: draft.updated_at || draft.inserted || ""
+              })
+              i = j // Skip to end of code block
+              continue
+            }
+            if (inSection) {
+              sectionText.push(line)
+            }
+          }
+        })
+        setExamples(codeExamples)
+        setError(null)
+      } catch (err) {
+        setError((err as Error).message)
+      } finally {
+        setLoading(false)
+      }
     }
-  ])
-  
+    fetchAndExtractExamples()
+  }, [])
+
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null)
   const languages = Array.from(new Set(examples.map(ex => ex.language)))

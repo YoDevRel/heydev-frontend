@@ -74,7 +74,7 @@ function buildDatasetInstructions(dataset: any) {
 export function AgentInterface() {
   const [isExpanded, setIsExpanded] = useState(false) 
   const [instructions, setInstructions] = useState('') 
-  const [userName, setUserName] = useState("NAME")
+  const [userName, setUserName] = useState("Joe")
   const [isLoading, setIsLoading] = useState(false)
   const [activeFeature, setActiveFeature] = useState<string | null>(null)
   const [repoUrl, setRepoUrl] = useState("")
