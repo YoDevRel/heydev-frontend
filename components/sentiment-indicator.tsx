@@ -1,13 +1,62 @@
+"use client"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
 interface SentimentIndicatorProps {
-  value: number // 0-1 scale
+  /**
+   * Optional value in the 0-1 range. If omitted, the component fetches the
+   * live score from the public API and refreshes it every 60 s.
+   */
+  value?: number
 }
 
 export function SentimentIndicator({ value }: SentimentIndicatorProps) {
+  const [sentiment, setSentiment] = useState<number | null>(
+    value !== undefined ? Math.max(0, Math.min(1, value)) : null,
+  )
+  const [error, setError] = useState<string | null>(null)
+
+  // Fetch only if the caller didn’t pass a value
+
+  useEffect(() => {
+    if (value !== undefined) return // controlled externally
+
+    const fetchSentiment = async () => {
+      try {
+        const res = await fetch("http://149.248.37.184:3000/sentiment")
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`)
+        const json = await res.json()
+        const v = Number(json?.[0]?.community_sentiment)
+        if (isNaN(v)) throw new Error("Invalid payload shape from API")
+        setSentiment(Math.max(0, Math.min(1, v)))
+        setError(null)
+      } catch (err) {
+        setError((err as Error).message)
+      }
+    }
+
+    fetchSentiment() // initial load
+    const id = setInterval(fetchSentiment, 60_000)
+    return () => clearInterval(id)
+  }, [value])
+
+  if (error)
+    return (
+      <Card className="bg-gray-800 border-gray-700 text-gray-100 p-6">
+        <p className="text-red-400 font-medium">Error loading sentiment: {error}</p>
+      </Card>
+    )
+
+  if (sentiment === null)
+    return (
+      <Card className="bg-gray-800 border-gray-700 text-gray-100 p-6">
+        <p className="text-gray-400">Loading sentiment…</p>
+      </Card>
+    )
+
   // Ensure value is between 0 and 1
-  const normalizedValue = Math.max(0, Math.min(1, value))
+  const normalizedValue = Math.max(0, Math.min(1, sentiment))
 
   // Calculate color gradient from red to blue
   const getColor = (value: number) => {
