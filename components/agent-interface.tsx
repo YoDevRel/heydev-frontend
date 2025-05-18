@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Maximize2, Minimize2, Send, Bot, Sparkles, RefreshCw, DownloadCloud, Trash2, BarChart3, FileText, Users, Code } from "lucide-react"
+import { Maximize2, Minimize2, Send, Bot, Sparkles, RefreshCw, DownloadCloud, Trash2, BarChart3, FileText, Users, Code, CheckCircle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -197,15 +197,24 @@ export function AgentInterface() {
           <div className="flex items-center gap-2">
             <Bot className="h-5 w-5 text-purple-500" />
             <div>
-              <CardTitle className="text-xl font-medium text-white">What can I help you with today?</CardTitle>
+              <CardTitle className="text-3xl font-medium text-white">What can I help you with today?</CardTitle>
             </div>
           </div>
-          <div style={{ maxWidth: '500px'}}>
-            Top 3 Action Items:
-            <ul style={{fontSize: '10px', listStyleType: 'circle'}}>
-              <li><b>Address Ollama Tool and Upgrade Errors</b>: <br></br>Resolve issues with Ollama tool call crashes and the inability to upgrade crewai-tools separately to improve user experience.</li>
-              <li><b>Enhance Memory and RAG Documentation</b>: <br></br>Develop comprehensive guides covering memory management, knowledge sources, and RAG tools to reduce confusion and duplicated queries.</li>
-              <li><b>Engage in Forums on MS SQL and LiteLLM Issues</b>: <br></br>Actively participate in discussions related to "NL2SQL not working for MS SQL" and "Intermittent 401 for my custom LiteLLM" to provide support and solutions.</li>
+          <div className="max-w-[500px] ml-auto">
+            <h4 className="text-2xl font-semibold text-gray-100 mb-2">Recommended Actions:</h4>
+            <ul className="text-lg list-none space-y-3">
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-5 w-5 text-purple-400 mt-1 flex-shrink-0" />
+                <span className="font-medium text-white">Address Ollama Tool and Upgrade Errors</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-5 w-5 text-purple-400 mt-1 flex-shrink-0" />
+                <span className="font-medium text-white">Enhance Memory and RAG Documentation</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <CheckCircle className="h-5 w-5 text-purple-400 mt-1 flex-shrink-0" />
+                <span className="font-medium text-white">Engage in Forums on MS SQL and LiteLLM Issues</span>
+              </li>
             </ul>
           </div>
         </CardHeader>
@@ -241,7 +250,7 @@ export function AgentInterface() {
               <CopilotChat
                 className="h-full"
                 labels={{
-                  initial: "Welcome! I'm just fetching the latest insights for you...",
+                  initial: "Let's get started...",
                 }}
                 instructions={instructions}
               />
