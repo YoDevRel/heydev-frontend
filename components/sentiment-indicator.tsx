@@ -1,7 +1,10 @@
 "use client"
 import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ArrowRight, BarChart3 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
 
 interface SentimentIndicatorProps {
   /**
@@ -15,7 +18,6 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
   const [sentiment, setSentiment] = useState<number | null>(
     value !== undefined ? Math.max(0, Math.min(1, value)) : null,
   )
-  const [topicSentiments, setTopicSentiments] = useState<any[]>([])
   const [error, setError] = useState<string | null>(null)
 
   // Fetch only if the caller didn’t pass a value
@@ -31,14 +33,6 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
         const v = Number(json?.[0]?.community_sentiment)
         if (isNaN(v)) throw new Error("Invalid payload shape from API")
         setSentiment(Math.max(0, Math.min(1, v)))
-
-        const resTopicSentiment = await fetch("http://149.248.37.184:3000/topic_sentiment")
-        if (!resTopicSentiment.ok) throw new Error(`Request failed: ${resTopicSentiment.status}`)
-        const jsonresTopicSentiment = (await resTopicSentiment.json()).sort((a: any, b: any) => {
-          return a.overall_sentiment_0_to_1 - b.overall_sentiment_0_to_1
-        }).slice(0, 5) // Get top 5 topics
-        setTopicSentiments(jsonresTopicSentiment)
-        console.log(jsonresTopicSentiment)
 
         setError(null)
       } catch (err) {
@@ -106,11 +100,16 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
   return (
     <Card className="bg-gray-800 border-gray-700 text-gray-100">
       <CardHeader>
-        <CardTitle className="flex items-center justify-between font-bold">
+        <CardTitle className="flex items-center gap-2 font-bold text-2xl">
+          <BarChart3 className="h-6 w-6 text-purple-400" />
           Community Sentiment
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-center mb-8 mt-2">
           <span
             className={cn(
-              "text-sm font-medium px-2.5 py-0.5 rounded-full",
+              "text-sm font-medium px-3 py-1 rounded-full",
               normalizedValue < 0.3
                 ? "bg-red-100 text-red-800"
                 : normalizedValue < 0.6
@@ -120,12 +119,7 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
           >
             {getSentimentText(normalizedValue)}
           </span>
-        </CardTitle>
-        <CardDescription>
-          Overall community sentiment based on social media, forums, and GitHub interactions
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </div>
         <div className="space-y-5 py-1">
           <div className="h-2 w-full bg-gray-700 rounded-full overflow-hidden">
             <div
@@ -158,14 +152,17 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
           </div>
 
           <div className="pt-3 border-t border-gray-700">
-            <h4 className="text-sm font-medium text-gray-300 mb-2">Low Sentiment Topics</h4>
-            <div className="flex flex-wrap gap-2" style={{ textAlign: "left" }}>
-              {topicSentiments.map((topicSentiment, index) => (
-                <div key={index} className="flex items-center gap-1">
-                  <span  style={{ textOverflow: "ellipsis", overflow: "hidden", width: "50px"}}>{topicSentiment.overall_sentiment_0_to_1}</span>
-                  <span style={{ textOverflow: "ellipsis", overflow: "hidden"}}>{topicSentiment.topic_title.slice(0, 50)}</span>
-                </div>
-              ))}
+            <div className="flex justify-center">
+              <Link href="/sentiment-details">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-8 bg-gray-700 text-white hover:bg-purple-800 hover:text-white transition-colors"
+                >
+                  View Details
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

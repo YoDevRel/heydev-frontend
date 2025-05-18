@@ -1,9 +1,13 @@
-import { Copy, ArrowRight } from "lucide-react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Copy, ArrowRight, Code } from "lucide-react"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 
 export function CodeExamples() {
+  // Number of new examples
+  const newExamplesCount = 3;
+  
   // Mock data
   const examples = [
     {
@@ -23,8 +27,20 @@ export function CodeExamples() {
   return (
     <Card className="h-[400px] flex flex-col bg-gray-800 border-gray-700 text-gray-100">
       <CardHeader>
-        <CardTitle className="text-gray-100 font-bold">Code Examples</CardTitle>
-        <CardDescription className="text-gray-300">Ready-to-use code snippets</CardDescription>
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="flex items-center gap-2 font-bold text-2xl">
+              <Code className="h-6 w-6 text-purple-400" />
+              Code Examples
+            </CardTitle>
+          </div>
+          {newExamplesCount > 0 && (
+            <div>
+              <span className="text-2xl font-bold text-purple-400">{newExamplesCount}</span>
+              <span className="text-gray-300 text-sm ml-1 align-bottom">new</span>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto">
         <div className="space-y-4">
@@ -49,15 +65,17 @@ export function CodeExamples() {
           ))}
         </div>
       </CardContent>
-      <CardFooter className="border-t pt-4 border-gray-700">
-        <Button 
-          variant="outline" 
-          className="w-full bg-gray-700 text-white hover:bg-purple-800 hover:text-white transition-colors duration-300" 
-          size="sm"
-        >
-          View All Examples
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
+      <CardFooter className="border-t pt-2 mt-auto border-gray-700">
+        <Link href="/code-examples" className="w-full">
+          <Button 
+            variant="outline" 
+            className="w-full bg-gray-700 text-white hover:bg-purple-800 hover:text-white transition-colors duration-300" 
+            size="sm"
+          >
+            View the Code
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   )
