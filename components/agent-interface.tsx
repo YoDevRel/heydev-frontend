@@ -12,7 +12,7 @@ import "@copilotkit/react-ui/styles.css"
 import { cn } from "@/lib/utils"
 
 const INSTRUCTION_TEMPLATE = `
-You are a helpful assistant. Your task is to analyze the provided dataset and provide insights based on the user's request.
+You are a helpful assistant for a Developer Relations team. Your task is to analyze the provided dataset and provide insights based on the user's request.
 
 # Community Sentiment
 This is a 0 - 1 scale where 0 is negative and 1 is positive and summarizes the overall sentiment of the community averaged across all topics.
