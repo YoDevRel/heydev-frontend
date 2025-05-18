@@ -66,7 +66,7 @@ export default function SentimentDetailsPage() {
                     <div className="md:col-span-2">
                       <h4 className="font-medium text-white">{topic.topic_title}</h4>
                       <p className="text-sm text-gray-400 mt-1">
-                        {topic.topic_description || "No description available"}
+                        {topic.rationale || "No description available"}
                       </p>
                     </div>
                   </div>
