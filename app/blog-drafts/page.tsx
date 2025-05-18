@@ -35,7 +35,7 @@ export default function BlogDraftsPage() {
         const data = await res.json()
         setRawData(data)
         // Filter and map to BlogDraft shape
-        const blogDrafts = data
+        let blogDrafts = data
           // .filter((item: any) => item.type === "blog" && item.status !== "published") // adjust filter as needed
           .map((item: any) => ({
             id: String(item.id),
@@ -46,6 +46,12 @@ export default function BlogDraftsPage() {
             status: item.status || "draft",
             wordCount: item.content ? item.content.split(/\s+/).length : 0,
           }))
+        // Sort by inserted (newest first), fallback to date
+        blogDrafts = blogDrafts.sort((a: BlogDraft, b: BlogDraft) => {
+          const aTime = a.inserted ? new Date(a.inserted).getTime() : (a.date ? new Date(a.date).getTime() : 0)
+          const bTime = b.inserted ? new Date(b.inserted).getTime() : (b.date ? new Date(b.date).getTime() : 0)
+          return bTime - aTime
+        })
         setDrafts(blogDrafts)
         setError(null)
       } catch (err) {
