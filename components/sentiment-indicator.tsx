@@ -15,6 +15,7 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
   const [sentiment, setSentiment] = useState<number | null>(
     value !== undefined ? Math.max(0, Math.min(1, value)) : null,
   )
+  const [topicSentiments, setTopicSentiments] = useState<any[]>([])
   const [error, setError] = useState<string | null>(null)
 
   // Fetch only if the caller didn’t pass a value
@@ -24,12 +25,21 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
 
     const fetchSentiment = async () => {
       try {
-        const res = await fetch("http://149.248.37.184:3000/sentiment")
-        if (!res.ok) throw new Error(`Request failed: ${res.status}`)
-        const json = await res.json()
+        const resSentiment = await fetch("http://149.248.37.184:3000/sentiment")
+        if (!resSentiment.ok) throw new Error(`Request failed: ${resSentiment.status}`)
+        const json = await resSentiment.json()
         const v = Number(json?.[0]?.community_sentiment)
         if (isNaN(v)) throw new Error("Invalid payload shape from API")
         setSentiment(Math.max(0, Math.min(1, v)))
+
+        const resTopicSentiment = await fetch("http://149.248.37.184:3000/topic_sentiment")
+        if (!resTopicSentiment.ok) throw new Error(`Request failed: ${resTopicSentiment.status}`)
+        const jsonresTopicSentiment = (await resTopicSentiment.json()).sort((a: any, b: any) => {
+          return a.overall_sentiment_0_to_1 - b.overall_sentiment_0_to_1
+        }).slice(0, 5) // Get top 5 topics
+        setTopicSentiments(jsonresTopicSentiment)
+        console.log(jsonresTopicSentiment)
+
         setError(null)
       } catch (err) {
         setError((err as Error).message)
@@ -148,25 +158,13 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
           </div>
 
           <div className="pt-3 border-t border-gray-700">
-            <h4 className="text-sm font-medium text-gray-300 mb-2">Top Keywords</h4>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { text: "documentation", sentiment: "positive" },
-                { text: "API", sentiment: "positive" },
-                { text: "performance", sentiment: "negative" },
-                { text: "helpful", sentiment: "positive" },
-                { text: "bugs", sentiment: "negative" },
-              ].map((keyword, index) => (
-                <span
-                  key={index}
-                  className={`text-xs px-2 py-1 rounded-full ${
-                    keyword.sentiment === "positive"
-                      ? "bg-purple-900/50 text-purple-300"
-                      : "bg-gray-700/50 text-gray-300"
-                  }`}
-                >
-                  {keyword.text}
-                </span>
+            <h4 className="text-sm font-medium text-gray-300 mb-2">Low Sentiment Topics</h4>
+            <div className="flex flex-wrap gap-2" style={{ textAlign: "left" }}>
+              {topicSentiments.map((topicSentiment, index) => (
+                <div key={index} className="flex items-center gap-1">
+                  <span  style={{ textOverflow: "ellipsis", overflow: "hidden", width: "50px"}}>{topicSentiment.overall_sentiment_0_to_1}</span>
+                  <span style={{ textOverflow: "ellipsis", overflow: "hidden"}}>{topicSentiment.topic_title.slice(0, 50)}</span>
+                </div>
               ))}
             </div>
           </div>
