@@ -200,6 +200,14 @@ export function AgentInterface() {
               <CardTitle className="text-xl font-medium text-white">What can I help you with today?</CardTitle>
             </div>
           </div>
+          <div style={{ maxWidth: '500px'}}>
+            Top 3 Action Items:
+            <ul style={{fontSize: '10px', listStyleType: 'circle'}}>
+              <li><b>Address Ollama Tool and Upgrade Errors</b>: <br></br>Resolve issues with Ollama tool call crashes and the inability to upgrade crewai-tools separately to improve user experience.</li>
+              <li><b>Enhance Memory and RAG Documentation</b>: <br></br>Develop comprehensive guides covering memory management, knowledge sources, and RAG tools to reduce confusion and duplicated queries.</li>
+              <li><b>Engage in Forums on MS SQL and LiteLLM Issues</b>: <br></br>Actively participate in discussions related to "NL2SQL not working for MS SQL" and "Intermittent 401 for my custom LiteLLM" to provide support and solutions.</li>
+            </ul>
+          </div>
         </CardHeader>
         
         <div className="flex-1 flex overflow-hidden">
