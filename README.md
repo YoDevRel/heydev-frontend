@@ -13,8 +13,8 @@ A tool for Developer Relations & Dev Advocates that helps them move faster, stay
 Lana Zumbrunn
 Jonny Tran
 Kevin Rohling
-Hari 
-Harshdeep G
+Hari Vilas Panjwani
+Harshdeep Gupta
 
 ![DevRel Hub Dashboard](https://placeholder.com/dashboard-preview.png)
 
