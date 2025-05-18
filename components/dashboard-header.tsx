@@ -1,4 +1,4 @@
-import { Bell, Search, Home, BarChart3, FileText, Users, MessageSquare, Code, Settings } from "lucide-react"
+import { Bell, Search, Home, BarChart3, FileText, Users, MessageSquare, Code, Settings, Bot } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -36,7 +36,8 @@ export function DashboardHeader({ currentPath = "/" }: DashboardHeaderProps) {
 
       <nav className="flex items-center space-x-1 overflow-x-auto pb-2">
         {[
-          { name: "Dashboard", icon: Home, href: "/" },
+          { name: "Agent", icon: Bot, href: "/agent" },
+          { name: "Dashboard", icon: Home, href: "/dashboard" },
           { name: "Community Sentiment", icon: BarChart3, href: "/sentiment-details" },
           { name: "Community Ideas", icon: Users, href: "/community-ideas" },
           { name: "Blog Posts", icon: FileText, href: "/blog-drafts" },
