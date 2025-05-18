@@ -11,8 +11,69 @@ import { CopilotChat } from "@copilotkit/react-ui"
 import "@copilotkit/react-ui/styles.css"
 import { cn } from "@/lib/utils"
 
+const INSTRUCTION_TEMPLATE = `
+You are a helpful assistant. Your task is to analyze the provided dataset and provide insights based on the user's request.
+
+# Community Sentiment
+This is a 0 - 1 scale where 0 is negative and 1 is positive and summarizes the overall sentiment of the community averaged across all topics.
+| community_sentiment_value |
+| ------------------------- |
+| {community_sentiment_value} |
+
+
+
+
+# Topic Sentiment
+This is a 0 - 1 scale where 0 is negative and 1 is positive and summarizes the overall sentiment of the community averaged across all posts for a single topic.
+
+| id | overall_sentiment_0_to_1 | rationale | topic_title | topic_summary |
+| ---- | ------------------------- | --------- | ----------- | ------------- |
+{topic_sentiment_rows}
+
+
+
+# Product Ideas
+This is a list of product ideas generated from the community feedback.
+
+| id | title | summary |
+| ---- | ----- | ------- |
+{product_ideas_rows}
+
+# Content
+This is a list of content generated from the community feedback and recent product changelogs.
+
+| id | channel | type | title | summary | content |
+| ---- | ------- | ---- | ----- | ------- | ------- |
+{content_rows}
+`
+function buildDatasetInstructions(dataset: any) {
+  const { sentiment, topic_sentiment, product_ideas, content } = dataset
+
+  console.log(dataset)
+
+  const communitySentimentValue = sentiment[0]?.community_sentiment
+  const topicSentimentRows = topic_sentiment.map((item) => {
+    return `| ${item.id} | ${item.overall_sentiment_0_to_1} | ${item.rationale} | ${item.topic_title} | ${item.summary} |`
+  }).join("\n")
+
+  const productIdeasRows = product_ideas.map((item) => {
+    return `| ${item.id} | ${item.title} | ${item.summary} |`
+  }).join("\n")
+
+  const contentRows = content.map((item) => {
+    return `| ${item.id} | ${item.channel} | ${item.type} | ${item.title} | ${item.summary} | ${item.content} |`
+  }).join("\n")
+
+  console.log("communitySentimentValue", communitySentimentValue)
+  return INSTRUCTION_TEMPLATE.replace("{community_sentiment_value}", communitySentimentValue)
+    .replace("{topic_sentiment_rows}", topicSentimentRows)
+    .replace("{product_ideas_rows}", productIdeasRows)
+    .replace("{content_rows}", contentRows)
+}
+
 export function AgentInterface() {
   const [isExpanded, setIsExpanded] = useState(false) 
+  const [instructions, setInstructions] = useState('') 
   const [userName, setUserName] = useState("NAME")
   const [isLoading, setIsLoading] = useState(false)
   const [activeFeature, setActiveFeature] = useState<string | null>(null)
@@ -35,7 +96,57 @@ export function AgentInterface() {
 
   const { } = useCopilotChat();
 
+  const baseUrl = "http://149.248.37.184:3000"
+
   useEffect(() => {
+    const fetchDataset = async () => {
+      const getData = async (path: string) => {
+        try {
+          const res = await fetch(`${baseUrl}/${path}`);
+          if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+          return res.json();          // ← no extra parens needed
+        } catch (err) {
+          console.error("Error fetching data:", err);
+          return null;                // return something so Promise.all always resolves
+        }
+      };
+
+      try {
+        // fire all four requests at once
+        const [
+          sentiment,
+          topicSentiment,
+          productIdeas,
+          content,
+        ] = await Promise.all([
+          getData("sentiment"),
+          getData("topic_sentiment"),
+          getData("product_ideas"),
+          getData("content"),
+        ]);
+
+        const newDataset = {
+          sentiment,
+          topic_sentiment: topicSentiment,
+          product_ideas: productIdeas,
+          content,
+        };
+
+        const instructions = buildDatasetInstructions(newDataset);
+        console.log(instructions);
+        setInstructions(instructions);
+
+      } catch (err) {
+        // this catches only if Promise.all rejects (e.g. network failure)
+        console.error("Dataset fetch failed:", err);
+      }
+    };
+
+    fetchDataset();
+
+
+
+
     if (activeFeature) {
       setIsLoading(true)
       const timer = setTimeout(() => {
@@ -57,6 +168,8 @@ export function AgentInterface() {
     console.log("Analyzing repository:", { repoUrl, startDate })
     setActiveFeature("Repository Analysis Triggered"); 
   }
+
+
 
   return (
     <div className="p-4 md:p-20 space-y-6 text-gray-100">
@@ -122,6 +235,7 @@ export function AgentInterface() {
                 labels={{
                   initial: "Welcome! I'm just fetching the latest insights for you...",
                 }}
+                instructions={instructions}
               />
             </div>
           </CardContent>
