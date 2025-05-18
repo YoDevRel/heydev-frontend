@@ -1,66 +1,52 @@
-import { Edit, Check, ArrowRight } from "lucide-react"
+import { ArrowRight, FileText, Video, Bell } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
 export function BlogDrafts() {
   // Mock data
-  const drafts = [
-    {
-      id: 1,
-      title: "Introducing Our New API Features",
-      excerpt:
-        "We're excited to announce several new features to our API that will make development faster and more intuitive...",
-      status: "draft",
-    },
-    {
-      id: 2,
-      title: "Best Practices for Serverless Functions",
-      excerpt: "Learn how to optimize your serverless functions for better performance and lower costs...",
-      status: "ready",
-    },
-  ]
+  const draftCount = 3 // Number of drafts ready for review
 
   return (
-    <Card className="h-[500px] flex flex-col bg-gray-800 border-gray-700 text-gray-100">
+    <Card className="h-[400px] flex flex-col bg-gray-800 border-gray-700 text-gray-100">
       <CardHeader>
-        <CardTitle className="text-gray-400">Blog Post Drafts</CardTitle>
-        <CardDescription>Review and approve blog content</CardDescription>
+        <CardTitle className="text-gray-100 font-bold">Blog Post Drafts</CardTitle>
+        <CardDescription>Manage and create blog content</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 overflow-y-auto">
-        <div className="space-y-4">
-          {drafts.map((draft) => (
-            <div key={draft.id} className="border border-gray-700 rounded-lg p-4 hover:bg-gray-700 transition-colors">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-medium text-gray-100">{draft.title}</h3>
-                <Badge
-                  variant="outline"
-                  className={draft.status === "draft" ? "bg-gray-700 text-gray-300" : "bg-purple-900 text-purple-300"}
-                >
-                  {draft.status === "draft" ? "Draft" : "Ready to Publish"}
-                </Badge>
-              </div>
-              <p className="text-sm text-gray-300 mb-3 line-clamp-3">{draft.excerpt}</p>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" size="sm" className="flex items-center gap-1">
-                  <Edit className="h-3.5 w-3.5" />
-                  Edit
-                </Button>
-                <Button variant="default" size="sm" className="bg-gray-600 hover:bg-gray-700 flex items-center gap-1">
-                  <Check className="h-3.5 w-3.5" />
-                  Approve
-                </Button>
-              </div>
+      <CardContent className="flex-1 flex flex-col justify-center p-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="border border-gray-700 rounded-lg p-4 hover:bg-gray-700 transition-colors text-center flex flex-col items-center">
+            <div className="bg-purple-900/30 p-2 rounded-full mb-2">
+              <Bell className="h-6 w-6 text-purple-400" />
             </div>
-          ))}
+            <h3 className="font-medium text-white mb-1">New Post Drafts</h3>
+            <div className="mb-3">
+              <span className="text-2xl font-bold text-purple-400">{draftCount}</span>
+              <span className="text-gray-300 text-sm ml-1">pending</span>
+            </div>
+            <Button variant="outline" size="sm" className="bg-gray-700 hover:bg-purple-800 hover:text-white transition-colors">
+              <FileText className="h-4 w-4 mr-2" />
+              Review Drafts
+            </Button>
+          </div>
+          
+          <div className="border border-gray-700 rounded-lg p-4 hover:bg-gray-700 transition-colors text-center flex flex-col items-center">
+            <div className="bg-gray-700/50 p-2 rounded-full mb-2">
+              <Video className="h-6 w-6 text-gray-300" />
+            </div>
+            <h3 className="font-medium text-white mb-1">Create from Media</h3>
+            <div className="text-xs text-gray-300 mb-3">
+              <div>Generate from</div>
+              <div>video/audio</div>
+            </div>
+            <Button variant="outline" size="sm" className="bg-gray-700 hover:bg-purple-800 hover:text-white transition-colors">
+              <Video className="h-4 w-4 mr-2" />
+              Upload Media
+            </Button>
+          </div>
         </div>
       </CardContent>
-      <CardFooter className="border-t pt-4">
-        <Button variant="outline" className="w-full" size="sm">
-          View All Drafts
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
-      </CardFooter>
+
     </Card>
   )
 }

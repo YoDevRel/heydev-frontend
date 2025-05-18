@@ -21,9 +21,9 @@ export function CodeExamples() {
   ]
 
   return (
-    <Card className="h-[500px] flex flex-col bg-gray-800 border-gray-700 text-gray-100">
+    <Card className="h-[400px] flex flex-col bg-gray-800 border-gray-700 text-gray-100">
       <CardHeader>
-        <CardTitle className="text-gray-400">Code Examples</CardTitle>
+        <CardTitle className="text-gray-100 font-bold">Code Examples</CardTitle>
         <CardDescription className="text-gray-300">Ready-to-use code snippets</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto">
@@ -50,7 +50,11 @@ export function CodeExamples() {
         </div>
       </CardContent>
       <CardFooter className="border-t pt-4 border-gray-700">
-        <Button variant="outline" className="w-full" size="sm">
+        <Button 
+          variant="outline" 
+          className="w-full bg-gray-700 text-white hover:bg-purple-800 hover:text-white transition-colors duration-300" 
+          size="sm"
+        >
           View All Examples
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
