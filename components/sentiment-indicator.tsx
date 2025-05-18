@@ -9,20 +9,26 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
   // Ensure value is between 0 and 1
   const normalizedValue = Math.max(0, Math.min(1, value))
 
-  // Calculate color gradient from red to blue
+  // Calculate color gradient from red to yellow to green
   const getColor = (value: number) => {
-    // Red to purple to blue gradient
+    // Tailwind colors for consistency
+    const redColor = { r: 239, g: 68, b: 68 }     // red-500
+    const yellowColor = { r: 234, g: 179, b: 8 }  // yellow-500
+    const greenColor = { r: 34, g: 197, b: 94 }   // green-500
+    
     if (value < 0.5) {
-      // Red to purple (0 to 0.5)
-      const r = 255 - Math.round(80 * (value * 2))
-      const g = 0 + Math.round(91 * (value * 2))
-      const b = 0 + Math.round(246 * (value * 2))
+      // Red to yellow (0 to 0.5)
+      const ratio = value * 2 // 0 to 1 for this range
+      const r = Math.round(redColor.r + (yellowColor.r - redColor.r) * ratio)
+      const g = Math.round(redColor.g + (yellowColor.g - redColor.g) * ratio)
+      const b = Math.round(redColor.b + (yellowColor.b - redColor.b) * ratio)
       return `rgb(${r}, ${g}, ${b})`
     } else {
-      // Purple to blue (0.5 to 1)
-      const r = 175 - Math.round(120 * (value - 0.5) * 2)
-      const g = 91 + Math.round(39 * (value - 0.5) * 2)
-      const b = 246
+      // Yellow to green (0.5 to 1)
+      const ratio = (value - 0.5) * 2 // 0 to 1 for this range
+      const r = Math.round(yellowColor.r + (greenColor.r - yellowColor.r) * ratio)
+      const g = Math.round(yellowColor.g + (greenColor.g - yellowColor.g) * ratio)
+      const b = Math.round(yellowColor.b + (greenColor.b - yellowColor.b) * ratio)
       return `rgb(${r}, ${g}, ${b})`
     }
   }
@@ -41,7 +47,7 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
   return (
     <Card className="bg-gray-800 border-gray-700 text-gray-100">
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+        <CardTitle className="flex items-center justify-between font-bold">
           Community Sentiment
           <span
             className={cn(
@@ -61,13 +67,12 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="space-y-5 py-1">
           <div className="h-2 w-full bg-gray-700 rounded-full overflow-hidden">
             <div
-              className="h-full rounded-full transition-all duration-500 ease-out"
+              className="h-full rounded-full transition-all duration-500 ease-out bg-white"
               style={{
-                width: `${percentage}%`,
-                backgroundColor: sentimentColor,
+                width: `${percentage}%`
               }}
             />
           </div>
@@ -78,17 +83,17 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
               <span>Critical</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-purple-500" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500" />
               <span>Neutral</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-blue-500" />
+              <div className="w-3 h-3 rounded-full bg-green-500" />
               <span>Positive</span>
             </div>
           </div>
 
           <div className="pt-2 text-center">
-            <span className="text-3xl font-bold" style={{ color: sentimentColor }}>
+            <span className="text-3xl font-bold text-white">
               {percentage}%
             </span>
           </div>
@@ -102,9 +107,6 @@ export function SentimentIndicator({ value }: SentimentIndicatorProps) {
                 { text: "performance", sentiment: "negative" },
                 { text: "helpful", sentiment: "positive" },
                 { text: "bugs", sentiment: "negative" },
-                { text: "intuitive", sentiment: "positive" },
-                { text: "slow", sentiment: "negative" },
-                { text: "community", sentiment: "positive" },
               ].map((keyword, index) => (
                 <span
                   key={index}

@@ -5,9 +5,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export function DashboardHeader() {
   return (
-    <header className="bg-gray-800 border-gray-700 py-3 px-6">
-      <div className="flex items-center justify-between mb-3">
-        <h1 className="text-2xl font-bold text-purple-500">DevRel Hub</h1>
+    <header className="bg-gray-800 border-gray-700 py-2 px-6">
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="text-2xl font-bold text-purple-500">HeyDev</h1>
 
         <div className="flex items-center gap-4">
           <div className="relative w-64">
@@ -32,12 +32,12 @@ export function DashboardHeader() {
       <nav className="flex items-center space-x-1 overflow-x-auto pb-2">
         {[
           { name: "Dashboard", icon: Home, active: true },
-          { name: "Analytics", icon: BarChart3 },
-          { name: "Content", icon: FileText },
-          { name: "Community", icon: Users },
-          { name: "Social", icon: MessageSquare },
-          { name: "Code", icon: Code },
-          { name: "Settings", icon: Settings },
+          // { name: "Analytics", icon: BarChart3 },
+          // { name: "Content", icon: FileText },
+          // { name: "Community", icon: Users },
+          // { name: "Social", icon: MessageSquare },
+          // { name: "Code", icon: Code },
+          // { name: "Settings", icon: Settings },
         ].map((item) => (
           <Button
             key={item.name}

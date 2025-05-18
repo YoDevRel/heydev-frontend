@@ -1,6 +1,20 @@
 # DevRel Hub - Developer Relations Management Platform
 
-DevRel Hub is a comprehensive platform designed to help developer relations teams manage their community engagement, content creation, and developer sentiment tracking in one place. The platform provides real-time insights into community sentiment, automates content generation, and helps prioritize community-driven feature requests and bug fixes.
+A tool for Developer Relations & Dev Advocates that helps them move faster, stay in sync with their communities, and scale their impact. Saves time manually generating every demo, doc, or insight.
+
+•	Auto-generated blog posts and tutorials from changelogs  
+•	Community sentiment analysis  
+•	Code sample scaffolds
+•	Internal feedback summaries, ready to ship to Product
+
+
+## Team
+
+Lana Zumbrunn
+Jonny Tran
+Kevin Rohling
+Hari 
+Harshdeep G
 
 ![DevRel Hub Dashboard](https://placeholder.com/dashboard-preview.png)
 
