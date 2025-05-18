@@ -1,7 +1,8 @@
 import { ArrowRight, FileText, Video, Bell } from "lucide-react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 
 export function BlogDrafts() {
   // Mock data
@@ -10,8 +11,10 @@ export function BlogDrafts() {
   return (
     <Card className="h-[400px] flex flex-col bg-gray-800 border-gray-700 text-gray-100">
       <CardHeader>
-        <CardTitle className="text-gray-100 font-bold">Blog Post Drafts</CardTitle>
-        <CardDescription>Manage and create blog content</CardDescription>
+        <CardTitle className="flex items-center gap-2 font-bold text-2xl">
+          <FileText className="h-6 w-6 text-purple-400" />
+          Blog Post Drafts
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col justify-center p-4">
         <div className="grid grid-cols-2 gap-4">
@@ -24,10 +27,12 @@ export function BlogDrafts() {
               <span className="text-2xl font-bold text-purple-400">{draftCount}</span>
               <span className="text-gray-300 text-sm ml-1">pending</span>
             </div>
-            <Button variant="outline" size="sm" className="bg-gray-700 hover:bg-purple-800 hover:text-white transition-colors">
-              <FileText className="h-4 w-4 mr-2" />
-              Review Drafts
-            </Button>
+            <Link href="/blog-drafts">
+              <Button variant="outline" size="sm" className="bg-gray-700 hover:bg-purple-800 hover:text-white transition-colors">
+                <FileText className="h-4 w-4 mr-2" />
+                Review Drafts
+              </Button>
+            </Link>
           </div>
           
           <div className="border border-gray-700 rounded-lg p-4 hover:bg-gray-700 transition-colors text-center flex flex-col items-center">

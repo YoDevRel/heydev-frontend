@@ -2,8 +2,13 @@ import { Bell, Search, Home, BarChart3, FileText, Users, MessageSquare, Code, Se
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import Link from "next/link"
 
-export function DashboardHeader() {
+interface DashboardHeaderProps {
+  currentPath?: string
+}
+
+export function DashboardHeader({ currentPath = "/" }: DashboardHeaderProps) {
   return (
     <header className="bg-gray-800 border-gray-700 py-2 px-6">
       <div className="flex items-center justify-between mb-2">
@@ -31,23 +36,23 @@ export function DashboardHeader() {
 
       <nav className="flex items-center space-x-1 overflow-x-auto pb-2">
         {[
-          { name: "Dashboard", icon: Home, active: true },
-          // { name: "Analytics", icon: BarChart3 },
-          // { name: "Content", icon: FileText },
-          // { name: "Community", icon: Users },
-          // { name: "Social", icon: MessageSquare },
-          // { name: "Code", icon: Code },
-          // { name: "Settings", icon: Settings },
+          { name: "Dashboard", icon: Home, href: "/" },
+          { name: "Community Sentiment", icon: BarChart3, href: "/sentiment-details" },
+          { name: "Community Ideas", icon: Users, href: "/community-ideas" },
+          { name: "Blog Posts", icon: FileText, href: "/blog-drafts" },
+          { name: "Social", icon: MessageSquare, href: "/social-posts" },
+          { name: "Code", icon: Code, href: "/code-examples" },
         ].map((item) => (
-          <Button
-            key={item.name}
-            variant={item.active ? "default" : "ghost"}
-            className={`flex items-center gap-2 ${item.active ? "bg-purple-600 hover:bg-purple-700" : "text-gray-300 hover:text-purple-400"}`}
-            size="sm"
-          >
-            <item.icon size={16} />
-            <span>{item.name}</span>
-          </Button>
+          <Link href={item.href} key={item.name}>
+            <Button
+              variant={currentPath === item.href ? "default" : "ghost"}
+              className={`flex items-center gap-2 ${currentPath === item.href ? "bg-purple-600 hover:bg-purple-700" : "text-gray-300 hover:text-purple-400"}`}
+              size="sm"
+            >
+              <item.icon size={16} />
+              <span>{item.name}</span>
+            </Button>
+          </Link>
         ))}
       </nav>
     </header>
